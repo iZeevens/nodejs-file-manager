@@ -1,0 +1,14 @@
+{
+  "name": "nodejs-file-manager",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "iZeevens",
+  "license": "ISC",
+  "description": "File Manager Node.js APIs"
+}
