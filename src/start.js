@@ -9,7 +9,7 @@ args.forEach(element => {
 });
 
 if (username) {
-  console.log(username)
+  console.log(`Welcome to the File Manager, ${username}!`)
 } else {
   throw new Error('No username provided')
 }
