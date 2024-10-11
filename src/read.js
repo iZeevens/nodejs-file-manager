@@ -1,9 +1,10 @@
 import fs from "node:fs";
+import os from "node:os";
 
-function getCurrentDir(filePath) {
-  const fileStream = fs.createReadStream(filePath);
+let dir = os.homedir();
 
-  console.log(fileStream);
+function getCurrentDir() {
+  console.log(`You are currently in ${dir}`);
 }
 
 export { getCurrentDir };

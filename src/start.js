@@ -1,4 +1,5 @@
 import exit from "./exit.js";
+import { getCurrentDir } from "./read.js";
 
 const args = process.argv.slice(2);
 
@@ -16,8 +17,5 @@ if (username) {
   throw new Error("No username provided");
 }
 
-// setInterval(() => {
-//   console.log('prossec')
-// }, 1000)
-
 exit(username);
+getCurrentDir();
