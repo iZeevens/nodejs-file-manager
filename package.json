@@ -10,5 +10,8 @@
   },
   "author": "iZeevens",
   "license": "ISC",
-  "description": "File Manager Node.js APIs"
+  "description": "File Manager Node.js APIs",
+  "dependencies": {
+    "@types/node": "^22.7.5"
+  }
 }
