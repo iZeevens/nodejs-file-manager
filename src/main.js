@@ -1,5 +1,5 @@
 import exit from "./exit.js";
-import { getCurrentDir } from "./read.js";
+import { getCurrentDir, inputCommand } from "./paths.js";
 
 const args = process.argv.slice(2);
 
@@ -19,3 +19,4 @@ if (username) {
 
 exit(username);
 getCurrentDir();
+inputCommand();
