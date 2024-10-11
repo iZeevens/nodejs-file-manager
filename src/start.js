@@ -13,3 +13,8 @@ if (username) {
 } else {
   throw new Error('No username provided')
 }
+
+process.on("SIGINT", () => {
+  console.log(`Thank you for using File Manager, ${username}, goodbye!`);
+  process.exit();
+});
