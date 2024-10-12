@@ -15,8 +15,6 @@ function workersWithFiles(opertaion, currDir) {
     console.log("Move file");
   } else if (opertaion === "rm") {
     console.log("Remove file");
-  } else {
-    console.error("Invalid input");
   }
 }
 

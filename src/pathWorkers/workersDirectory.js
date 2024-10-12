@@ -11,9 +11,9 @@ async function workerDirectory(opertaion, currDir) {
   } else if (opertaionName === "cd" && pathToFile) {
     try {
       const pathCd = path.join(currDir, pathToFile);
-      await fs.promises.access(pathCd);
+      await fs.access(pathCd);
       return pathCd;
-    } catch {
+    } catch (err) {
       console.error("Operation failed");
     }
   } else if (opertaionName === "ls") {
@@ -34,8 +34,6 @@ async function workerDirectory(opertaion, currDir) {
     result.sort((a, b) => a[0].localeCompare(b[0]) && a[1].localeCompare(b[1]));
 
     console.table(result);
-  } else {
-    console.error("Invalid input");
   }
 }
 
