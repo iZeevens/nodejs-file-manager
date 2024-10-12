@@ -3,14 +3,14 @@ import fs from "node:fs/promises";
 
 async function workerDirectory(opertaion, currDir) {
   const opertaionName = opertaion[0];
-  const folder = opertaion[1] || null;
+  const pathToFile = opertaion[1] || null;
 
   if (opertaionName === "up") {
     const pathUp = path.join(currDir, "..");
     return pathUp;
-  } else if (opertaionName === "cd" && folder) {
+  } else if (opertaionName === "cd" && pathToFile) {
     try {
-      const pathCd = path.join(currDir, folder);
+      const pathCd = path.join(currDir, pathToFile);
       await fs.promises.access(pathCd);
       return pathCd;
     } catch {
