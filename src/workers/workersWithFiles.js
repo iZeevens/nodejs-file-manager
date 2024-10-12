@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { join } from "node:path";
 
+//Opertations to owns function
 async function workersWithFiles(opertaion) {
   const operationName = opertaion[0];
   const pathToFile = opertaion[1] || null;
