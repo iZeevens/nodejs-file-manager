@@ -1,6 +1,7 @@
 import path from "node:path";
+import fs from "node:fs/promises";
 
-function workerDirectory(opertaion, currDir) {
+async function workerDirectory(opertaion, currDir) {
   const opertaionName = opertaion[0];
   const folder = opertaion[1] || null;
 
@@ -12,7 +13,9 @@ function workerDirectory(opertaion, currDir) {
     }
   } else if (opertaionName === "cd" && folder) {
     try {
-      return path.join(currDir, folder);
+      const pathCd = path.join(currDir, folder)
+      await fs.access(pathCd)
+      return pathCd;
     } catch {
       console.error("Operation failed");
     }

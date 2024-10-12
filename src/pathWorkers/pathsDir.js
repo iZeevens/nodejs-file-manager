@@ -10,9 +10,9 @@ function getCurrentDir() {
 
 function inputCommand() {
   console.log("Please print command");
-  stdin.on("data", (data) => {
+  stdin.on("data", async (data) => {
     data = data.toString().trim().split(' ');
-    const result = workerDirectory(data, dir);
+    const result = await workerDirectory(data, dir);
 
     if (result) {
       dir = result;
