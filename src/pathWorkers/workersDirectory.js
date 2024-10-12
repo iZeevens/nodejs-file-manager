@@ -1,26 +1,25 @@
 import path from "node:path";
 
-const listComands = ["up", "cd", "ls"];
+function workerDirectory(opertaion, currDir) {
+  const opertaionName = opertaion[0];
+  const folder = opertaion[1] || null;
 
-function workerDirectory(opertaion, currDir, folder) {
-  opertaion = opertaion.trim();
-
-  if (opertaion === "up") {
+  if (opertaionName === "up") {
     try {
       return path.join(currDir, "..");
     } catch {
-      console.error("Invalid input");
+      console.error("Operation failed");
     }
-  } else if (opertaion === "cd" && folder) {
+  } else if (opertaionName === "cd" && folder) {
     try {
       return path.join(currDir, folder);
     } catch {
-      console.error("Invalid input");
+      console.error("Operation failed");
     }
-  } else if (opertaion === "ls") {
+  } else if (opertaionName === "ls") {
     console.log("list folders");
   } else {
-    console.error("Operation failed");
+    console.error("Invalid input");
   }
 }
 

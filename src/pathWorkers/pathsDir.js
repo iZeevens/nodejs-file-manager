@@ -11,7 +11,7 @@ function getCurrentDir() {
 function inputCommand() {
   console.log("Please print command");
   stdin.on("data", (data) => {
-    data = data.toString();
+    data = data.toString().trim().split(' ');
     const result = workerDirectory(data, dir);
 
     if (result) {
