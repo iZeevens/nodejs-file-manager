@@ -1,5 +1,7 @@
 import os from "node:os";
 import { stdin } from "node:process";
+import { exit } from "../exit.js";
+import { username } from "../main.js";
 import workerDirectory from "./workersDirectory.js";
 import workersWithFiles from "./workersWithFiles.js";
 
@@ -26,6 +28,8 @@ async function handleWorkers(data) {
     return await workerDirectory(args, dir);
   } else if (workersWithFilesOperations.has(command)) {
     return workersWithFiles(args, dir);
+  } else if (command === ".exit") {
+    exit(username);
   } else {
     console.error("Invalid input");
   }

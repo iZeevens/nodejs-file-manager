@@ -1,4 +1,4 @@
-import exit from "./exit.js";
+import { setupExitHandler } from "./exit.js";
 import { getCurrentDir, inputCommand } from "./pathWorkers/pathsDir.js";
 
 const args = process.argv.slice(2);
@@ -17,6 +17,8 @@ if (username) {
   throw new Error("No username provided");
 }
 
-exit(username);
+setupExitHandler(username);
 getCurrentDir();
 inputCommand();
+
+export { username };
