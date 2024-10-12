@@ -1,7 +1,7 @@
+import workerDirectory from "./workersDirectory.js";
 import os from "node:os";
 import { stdin } from "node:process";
 
-const workingDirectoryComands = ["up", "cd", "ls"];
 let dir = os.homedir();
 
 function getCurrentDir() {
@@ -11,7 +11,13 @@ function getCurrentDir() {
 function inputCommand() {
   console.log("Please print command");
   stdin.on("data", (data) => {
-    console.log(data.toString());
+    data = data.toString();
+    const result = workerDirectory(data, dir);
+
+    if (result) {
+      dir = result;
+    }
+    getCurrentDir();
   });
 }
 

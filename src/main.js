@@ -1,7 +1,8 @@
 import exit from "./exit.js";
-import { getCurrentDir, inputCommand } from "./paths.js";
+import { getCurrentDir, inputCommand } from "./pathWorkers/pathsDir.js";
 
 const args = process.argv.slice(2);
+
 
 let username = null;
 
