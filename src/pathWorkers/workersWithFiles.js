@@ -46,16 +46,18 @@ async function workersWithFiles(opertaion) {
       }
     } else if (operationName === "mv" && pathToNewFile) {
       try {
-        await fs.promises.rename(
-          pathToFile,
-          pathToNewFile
-        );
+        await fs.promises.rename(pathToFile, pathToNewFile);
         console.log("The file name has been moved!");
       } catch {
         console.error("Operation failed");
       }
     } else if (operationName === "rm") {
-      console.log("Remove file");
+      try {
+        await fs.promises.unlink(pathToFile);
+        console.log("The file name has been removed!");
+      } catch {
+        console.error("Operation failed");
+      }
     } else {
       console.error("Invalid input");
     }
