@@ -3,7 +3,6 @@ import { getCurrentDir, inputCommand } from "./pathWorkers/pathsDir.js";
 
 const args = process.argv.slice(2);
 
-
 let username = null;
 
 args.forEach((element) => {
