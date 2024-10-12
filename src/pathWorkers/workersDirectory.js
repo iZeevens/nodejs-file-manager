@@ -13,7 +13,7 @@ async function workerDirectory(opertaion, currDir) {
       const pathCd = path.join(currDir, pathToFile);
       await fs.access(pathCd);
       return pathCd;
-    } catch (err) {
+    } catch {
       console.error("Operation failed");
     }
   } else if (opertaionName === "ls") {

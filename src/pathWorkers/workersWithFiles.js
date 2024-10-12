@@ -1,11 +1,22 @@
 import fs from "node:fs";
 
-function workersWithFiles(opertaion, currDir) {
+async function workersWithFiles(opertaion) {
   const opertaionName = opertaion[0];
   const pathToFile = opertaion[1] || null;
   const pathToFolder = opertaion[2] || null;
 
   if (opertaionName === "cat") {
+    try {
+      await fs.promises.access(pathToFile);
+      const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
+
+      data.on('data', (data) => {
+        console.log(data);
+      })
+    } catch (err) {
+      console.error("Operation failed", err);
+    }
+
     console.log("Read file");
   } else if (opertaionName === "add") {
     console.log("Create new empty file");
