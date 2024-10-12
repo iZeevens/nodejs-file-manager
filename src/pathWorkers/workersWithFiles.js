@@ -1,38 +1,43 @@
 import fs from "node:fs";
+import { join } from "node:path";
 
 async function workersWithFiles(opertaion) {
-  const opertaionName = opertaion[0];
+  const operationName = opertaion[0];
   const pathToFile = opertaion[1] || null;
-  const pathToFolder = opertaion[2] || null;
+  const pathToNewFile = opertaion[2] || null;
 
   if (pathToFile) {
-    if (opertaionName === "cat") {
+    if (operationName === "cat") {
       try {
         await fs.promises.access(pathToFile);
         const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
-  
-        data.on('data', (data) => {
+
+        data.on("data", (data) => {
           console.log(data);
-        })
+        });
       } catch {
         console.error("Operation failed");
       }
-  
+
       console.log("Read file");
-    } else if (opertaionName === "add") {
+    } else if (operationName === "add") {
       try {
-        await fs.promises.writeFile(pathToFile, '')
+        await fs.promises.writeFile(pathToFile, "");
         console.log("A new file has been created!");
       } catch {
         console.error("Operation failed");
       }
-    } else if (opertaionName === "rn") {
-      console.log("Rename file");
-    } else if (opertaionName === "cp") {
+    } else if (operationName === "rn" && pathToNewFile) {
+      fs.rename(pathToFile, join(pathToFile, '..', pathToNewFile), (err) => {
+        if (err) {
+          console.error("Operation failed");
+        }
+      });
+    } else if (operationName === "cp") {
       console.log("Copy file");
-    } else if (opertaionName === "mv") {
+    } else if (operationName === "mv") {
       console.log("Move file");
-    } else if (opertaionName === "rm") {
+    } else if (operationName === "rm") {
       console.log("Remove file");
     } else {
       console.error("Invalid input");
