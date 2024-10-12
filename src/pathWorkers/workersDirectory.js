@@ -34,6 +34,8 @@ async function workerDirectory(opertaion, currDir) {
     result.sort((a, b) => a[0].localeCompare(b[0]) && a[1].localeCompare(b[1]));
 
     console.table(result);
+  } else {
+    console.error("Invalid input");
   }
 }
 
