@@ -28,15 +28,32 @@ async function workersWithFiles(opertaion) {
         console.error("Operation failed");
       }
     } else if (operationName === "rn" && pathToNewFile) {
-      fs.rename(pathToFile, join(pathToFile, '..', pathToNewFile), (err) => {
-        if (err) {
-          console.error("Operation failed");
-        }
-      });
-    } else if (operationName === "cp") {
-      console.log("Copy file");
-    } else if (operationName === "mv") {
-      console.log("Move file");
+      try {
+        await fs.promises.rename(
+          pathToFile,
+          join(pathToFile, "..", pathToNewFile)
+        );
+        console.log("The file name has been changed!");
+      } catch {
+        console.error("Operation failed");
+      }
+    } else if (operationName === "cp" && pathToNewFile) {
+      try {
+        await fs.promises.copyFile(pathToFile, pathToNewFile);
+        console.log("The file has been copied!");
+      } catch {
+        console.error("Operation failed");
+      }
+    } else if (operationName === "mv" && pathToNewFile) {
+      try {
+        await fs.promises.rename(
+          pathToFile,
+          pathToNewFile
+        );
+        console.log("The file name has been moved!");
+      } catch {
+        console.error("Operation failed");
+      }
     } else if (operationName === "rm") {
       console.log("Remove file");
     } else {
