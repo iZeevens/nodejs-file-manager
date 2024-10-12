@@ -26,7 +26,7 @@ async function handleWorkers(data) {
 
   if (workersDirectoryOperations.has(command)) {
     return await workerDirectory(args, dir);
-  } else if (workersWithFilesOperations.has(command) && args.length > 1) {
+  } else if (workersWithFilesOperations.has(command)) {
     return workersWithFiles(args);
   } else if (command === ".exit") {
     exit(username);
