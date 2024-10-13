@@ -47,7 +47,7 @@ function getArchitecture() {
 }
 
 function workersOsSystem(opertaions) {
-  const osOperation = {
+  const operationMap = {
     "--EOL": getEOL,
     "--cpus": getCpus,
     "--homedir": getHomeDir,
@@ -55,7 +55,7 @@ function workersOsSystem(opertaions) {
     "--architecture": getArchitecture,
   };
   const operationGet = opertaions[1];
-  const operationFunction = osOperation[operationGet];
+  const operationFunction = operationMap[operationGet];
 
   if (operationFunction) {
     operationFunction();

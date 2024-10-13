@@ -1,67 +1,95 @@
 import fs from "node:fs";
-import { join } from "node:path";
 
-//Opertations to owns function
+async function handleFileOperation(operation, requiredArgs, ...args) {
+  if (args.length < requiredArgs || args.some((arg) => !arg)) {
+    console.error("Invalid input");
+    return;
+  }
+
+  try {
+    await operation(...args);
+  } catch {
+    console.error("Operation failed");
+  }
+}
+
+async function readFileOperation(pathToFile) {
+  await handleFileOperation(
+    async (pathToFile) => {
+      const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
+      data.on("data", (chunk) => {
+        console.log(chunk);
+      });
+    },
+    1,
+    pathToFile
+  );
+}
+
+async function addFileOperation(pathToFile) {
+  await handleFileOperation(
+    (pathToFile) => fs.promises.writeFile(pathToFile, ""),
+    1,
+    pathToFile
+  );
+}
+
+async function renameFileOperation(pathToFile, pathToNewFile) {
+  await handleFileOperation(
+    (pathToFile, pathToNewFile) =>
+      fs.promises.rename(pathToFile, pathToNewFile),
+    2,
+    pathToFile,
+    pathToNewFile
+  );
+}
+
+async function copyFileOperation(pathToFile, pathToNewFile) {
+  await handleFileOperation(
+    (pathToFile, pathToNewFile) =>
+      fs.promises.copyFile(pathToFile, pathToNewFile),
+    2,
+    pathToFile,
+    pathToNewFile
+  );
+}
+
+async function moveFileOperation(pathToFile, pathToNewFile) {
+  await handleFileOperation(
+    (pathToFile, pathToNewFile) =>
+      fs.promises.rename(pathToFile, pathToNewFile),
+    2,
+    pathToFile,
+    pathToNewFile
+  );
+}
+
+async function deleteFileOperation(pathToFile) {
+  await handleFileOperation(
+    (pathToFile) => fs.promises.unlink(pathToFile),
+    1,
+    pathToFile
+  );
+}
+
 async function workersWithFiles(opertaions) {
   const operationName = opertaions[0];
   const pathToFile = opertaions[1] || null;
   const pathToNewFile = opertaions[2] || null;
 
-  if (pathToFile) {
-    if (operationName === "cat") {
-      try {
-        await fs.promises.access(pathToFile);
-        const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
+  const operationMap = {
+    cat: readFileOperation,
+    add: addFileOperation,
+    rn: renameFileOperation,
+    cp: copyFileOperation,
+    mv: moveFileOperation,
+    rm: deleteFileOperation,
+  };
 
-        data.on("data", (data) => {
-          console.log(data);
-        });
-      } catch {
-        console.error("Operation failed");
-      }
+  const operationFunction = operationMap[operationName];
 
-      console.log("Read file");
-    } else if (operationName === "add") {
-      try {
-        await fs.promises.writeFile(pathToFile, "");
-        console.log("A new file has been created!");
-      } catch {
-        console.error("Operation failed");
-      }
-    } else if (operationName === "rn" && pathToNewFile) {
-      try {
-        await fs.promises.rename(
-          pathToFile,
-          join(pathToFile, "..", pathToNewFile)
-        );
-        console.log("The file name has been changed!");
-      } catch {
-        console.error("Operation failed");
-      }
-    } else if (operationName === "cp" && pathToNewFile) {
-      try {
-        await fs.promises.copyFile(pathToFile, pathToNewFile);
-        console.log("The file has been copied!");
-      } catch {
-        console.error("Operation failed");
-      }
-    } else if (operationName === "mv" && pathToNewFile) {
-      try {
-        await fs.promises.rename(pathToFile, pathToNewFile);
-        console.log("The file name has been moved!");
-      } catch {
-        console.error("Operation failed");
-      }
-    } else if (operationName === "rm") {
-      try {
-        await fs.promises.unlink(pathToFile);
-        console.log("The file name has been removed!");
-      } catch {
-        console.error("Operation failed");
-      }
-    } else {
-      console.error("Invalid input");
-    }
+  if (operationFunction) {
+    await operationFunction(pathToFile, pathToNewFile);
   } else {
     console.error("Invalid input");
   }
