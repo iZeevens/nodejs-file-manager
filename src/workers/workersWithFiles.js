@@ -1,7 +1,8 @@
 import fs from "node:fs";
+import { join } from "node:path";
 
 async function handleFileOperation(operation, requiredArgs, ...args) {
-  if (args.length < requiredArgs || args.some((arg) => !arg)) {
+  if (args.length < requiredArgs || args.some((arg) => arg == null)) {
     console.error("Invalid input");
     return;
   }
@@ -27,49 +28,28 @@ async function readFileOperation(pathToFile) {
 }
 
 async function addFileOperation(pathToFile) {
-  await handleFileOperation(
-    (pathToFile) => fs.promises.writeFile(pathToFile, ""),
-    1,
-    pathToFile
-  );
+  await handleFileOperation(fs.promises.writeFile, 1, pathToFile, "");
 }
 
 async function renameFileOperation(pathToFile, pathToNewFile) {
   await handleFileOperation(
-    (pathToFile, pathToNewFile) =>
-      fs.promises.rename(pathToFile, pathToNewFile),
+    fs.promises.rename,
     2,
     pathToFile,
-    pathToNewFile
+    join(pathToFile, "..", pathToNewFile)
   );
 }
 
 async function copyFileOperation(pathToFile, pathToNewFile) {
-  await handleFileOperation(
-    (pathToFile, pathToNewFile) =>
-      fs.promises.copyFile(pathToFile, pathToNewFile),
-    2,
-    pathToFile,
-    pathToNewFile
-  );
+  await handleFileOperation(fs.promises.copyFile, 2, pathToFile, pathToNewFile);
 }
 
 async function moveFileOperation(pathToFile, pathToNewFile) {
-  await handleFileOperation(
-    (pathToFile, pathToNewFile) =>
-      fs.promises.rename(pathToFile, pathToNewFile),
-    2,
-    pathToFile,
-    pathToNewFile
-  );
+  await handleFileOperation(fs.promises.rename, 2, pathToFile, pathToNewFile);
 }
 
 async function deleteFileOperation(pathToFile) {
-  await handleFileOperation(
-    (pathToFile) => fs.promises.unlink(pathToFile),
-    1,
-    pathToFile
-  );
+  await handleFileOperation(fs.promises.unlink, 1, pathToFile);
 }
 
 async function workersWithFiles(opertaions) {
