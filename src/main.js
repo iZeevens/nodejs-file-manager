@@ -1,5 +1,5 @@
 import { setupExitHandler } from "./exit.js";
-import { getCurrentDir, inputCommand } from "./pathWorkers/pathsDir.js";
+import { getCurrentDir, inputCommand } from "./path/pathsDir.js";
 
 const args = process.argv.slice(2);
 

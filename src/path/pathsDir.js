@@ -2,8 +2,9 @@ import os from "node:os";
 import { stdin } from "node:process";
 import { exit } from "../exit.js";
 import { username } from "../main.js";
-import workerDirectory from "./workersDirectory.js";
-import workersWithFiles from "./workersWithFiles.js";
+import workerDirectory from "../workers/workersDirectory.js";
+import workersWithFiles from "../workers/workersWithFiles.js";
+import workersOsSystem from "../workers/workersOsSystem.js";
 
 const workersDirectoryOperations = new Set(["up", "cd", "ls"]);
 const workersWithFilesOperations = new Set([
@@ -27,9 +28,9 @@ async function handleWorkers(data) {
   if (workersDirectoryOperations.has(command)) {
     return await workerDirectory(args, dir);
   } else if (workersWithFilesOperations.has(command)) {
-    return workersWithFiles(args);
+    workersWithFiles(args);
   } else if (command === "os") {
-
+    workersOsSystem(args);
   } else if (command === ".exit") {
     exit(username);
   } else {
