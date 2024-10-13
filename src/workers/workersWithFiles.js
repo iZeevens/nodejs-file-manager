@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import zlib from "node:zlib";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 
@@ -68,6 +69,28 @@ async function hashFileOpertaion(pathToFile) {
   await handleFileOperation(hash, 1, pathToFile);
 }
 
+async function compressFileOperation(pathToFile, pathToNewFile) {
+  const compress = (pathToFile, pathToNewFile) => {
+    const readStream = fs.createReadStream(pathToFile);
+    const writeStream = fs.createWriteStream(pathToNewFile);
+    const broat = zlib.createBrotliCompress();
+    readStream.pipe(broat).pipe(writeStream);
+  };
+
+  await handleFileOperation(compress, 2, pathToFile, pathToNewFile);
+}
+
+async function decompressFileOperation(pathToFile, pathToNewFile) {
+  const decompress = (pathToFile, pathToNewFile) => {
+    const readStream = fs.createReadStream(pathToFile);
+    const writeStream = fs.createWriteStream(pathToNewFile);
+    const broat = zlib.createBrotliDecompress();
+    readStream.pipe(broat).pipe(writeStream);
+  };
+
+  await handleFileOperation(decompress, 2, pathToFile, pathToNewFile);
+}
+
 async function workersWithFiles(opertaions) {
   const operationName = opertaions[0];
   const pathToFile = opertaions[1] || null;
@@ -81,6 +104,8 @@ async function workersWithFiles(opertaions) {
     mv: moveFileOperation,
     rm: deleteFileOperation,
     hash: hashFileOpertaion,
+    compress: compressFileOperation,
+    decompress: decompressFileOperation,
   };
 
   const operationFunction = operationMap[operationName];

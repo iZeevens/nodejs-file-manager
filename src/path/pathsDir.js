@@ -15,6 +15,8 @@ const workersWithFilesOperations = new Set([
   "mv",
   "rm",
   "hash",
+  "compress",
+  "decompress",
 ]);
 let dir = os.homedir();
 
