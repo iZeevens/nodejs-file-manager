@@ -2,10 +2,10 @@ import fs from "node:fs";
 import { join } from "node:path";
 
 //Opertations to owns function
-async function workersWithFiles(opertaion) {
-  const operationName = opertaion[0];
-  const pathToFile = opertaion[1] || null;
-  const pathToNewFile = opertaion[2] || null;
+async function workersWithFiles(opertaions) {
+  const operationName = opertaions[0];
+  const pathToFile = opertaions[1] || null;
+  const pathToNewFile = opertaions[2] || null;
 
   if (pathToFile) {
     if (operationName === "cat") {

@@ -28,6 +28,8 @@ async function handleWorkers(data) {
     return await workerDirectory(args, dir);
   } else if (workersWithFilesOperations.has(command)) {
     return workersWithFiles(args);
+  } else if (command === "os") {
+
   } else if (command === ".exit") {
     exit(username);
   } else {

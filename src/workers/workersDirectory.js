@@ -1,9 +1,10 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 
-async function workerDirectory(opertaion, currDir) {
-  const opertaionName = opertaion[0];
-  const pathToFile = opertaion[1] || null;
+//Opertations to owns function
+async function workerDirectory(opertaions, currDir) {
+  const opertaionName = opertaions[0];
+  const pathToFile = opertaions[1] || null;
 
   if (opertaionName === "up") {
     const pathUp = path.join(currDir, "..");
