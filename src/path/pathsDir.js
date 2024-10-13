@@ -14,6 +14,7 @@ const workersWithFilesOperations = new Set([
   "cp",
   "mv",
   "rm",
+  "hash",
 ]);
 let dir = os.homedir();
 

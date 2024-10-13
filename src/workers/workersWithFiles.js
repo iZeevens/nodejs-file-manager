@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 
 async function handleFileOperation(operation, requiredArgs, ...args) {
@@ -15,16 +16,14 @@ async function handleFileOperation(operation, requiredArgs, ...args) {
 }
 
 async function readFileOperation(pathToFile) {
-  await handleFileOperation(
-    async (pathToFile) => {
-      const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
-      data.on("data", (chunk) => {
-        console.log(chunk);
-      });
-    },
-    1,
-    pathToFile
-  );
+  const read = (pathToFile) => {
+    const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
+    data.on("data", (chunk) => {
+      console.log(chunk);
+    });
+  };
+
+  await handleFileOperation(read, 1, pathToFile);
 }
 
 async function addFileOperation(pathToFile) {
@@ -52,6 +51,23 @@ async function deleteFileOperation(pathToFile) {
   await handleFileOperation(fs.promises.unlink, 1, pathToFile);
 }
 
+async function hashFileOpertaion(pathToFile) {
+  const hash = (pathToFile) => {
+    const hash = createHash("sha256");
+    const readStream = fs.createReadStream(pathToFile);
+    readStream.on("data", (chunk) => {
+      hash.update(chunk);
+    });
+    readStream.on("end", () => {
+      console.log(`SHA256 hash for the file: ${hash.digest("hex")}`);
+    });
+    readStream.on("error", (err) => {
+      console.error(err.message);
+    });
+  };
+  await handleFileOperation(hash, 1, pathToFile);
+}
+
 async function workersWithFiles(opertaions) {
   const operationName = opertaions[0];
   const pathToFile = opertaions[1] || null;
@@ -64,6 +80,7 @@ async function workersWithFiles(opertaions) {
     cp: copyFileOperation,
     mv: moveFileOperation,
     rm: deleteFileOperation,
+    hash: hashFileOpertaion,
   };
 
   const operationFunction = operationMap[operationName];
