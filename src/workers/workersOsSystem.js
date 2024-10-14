@@ -1,15 +1,19 @@
 import os from "node:os";
 
-function getEOL() {
+function handleOsSystem(operation) {
   try {
-    console.log(JSON.stringify(os.EOL));
-  } catch(err) {
+    operation();
+  } catch (err) {
     console.error(`Operation failed ${err}`);
   }
 }
 
+function getEOL() {
+  handleOsSystem(() => console.log(JSON.stringify(os.EOL)));
+}
+
 function getCpus() {
-  try {
+  handleOsSystem(() => {
     const userCpus = os.cpus();
     userCpus.forEach((cpu) => {
       delete cpu.times;
@@ -17,33 +21,19 @@ function getCpus() {
     });
 
     console.table(userCpus);
-  } catch(err) {
-    console.error(`Operation failed ${err}`);
-  }
+  });
 }
 
 function getHomeDir() {
-  try {
-    console.log(os.homedir());
-  } catch(err) {
-    console.error(`Operation failed ${err}`);
-  }
+  handleOsSystem(() => console.log(os.homedir()));
 }
 
 function getUsername() {
-  try {
-    console.log(os.userInfo().username);
-  } catch(err) {
-    console.error(`Operation failed ${err}`);
-  }
+  handleOsSystem(() => console.log(os.userInfo().username));
 }
 
 function getArchitecture() {
-  try {
-    console.log(os.arch());
-  } catch(err) {
-    console.error(`Operation failed ${err}`);
-  }
+  handleOsSystem(() => console.log(os.arch()));
 }
 
 function workersOsSystem(opertaions) {
