@@ -3,14 +3,7 @@ import zlib from "node:zlib";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { pipeline } from "node:stream";
-
-async function handleFileOperation(operation, ...args) {
-  try {
-    await operation(...args);
-  } catch (err) {
-    console.error(`Operation failed ${err}`);
-  }
-}
+import { handleFileOperation } from "./workersHelpers.js";
 
 // Problem first result
 async function readFileOperation(pathToFile) {

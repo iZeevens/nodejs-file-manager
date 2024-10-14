@@ -1,12 +1,5 @@
 import os from "node:os";
-
-function handleOsSystem(operation) {
-  try {
-    operation();
-  } catch (err) {
-    console.error(`Operation failed ${err}`);
-  }
-}
+import { handleOsSystem } from "./workersHelpers.js";
 
 function getEOL() {
   handleOsSystem(() => console.log(JSON.stringify(os.EOL)));
