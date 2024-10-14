@@ -7,6 +7,11 @@ function upDir(currDir) {
 }
 
 async function cdDir(currDir, pathToFile) {
+  if (!pathToFile) {
+    console.error("Invalid input");
+    return;
+  }
+
   try {
     const pathCd = path.join(currDir, pathToFile);
     await fs.access(pathCd);
