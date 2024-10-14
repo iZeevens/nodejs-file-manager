@@ -1,0 +1,55 @@
+import os from "node:os";
+import { stdin } from "node:process";
+import { exit } from "../exit.js";
+import { username } from "../main.js";
+import workerDirectory from "../workers/workersDirectory.js";
+import workersWithFiles from "../workers/workersWithFiles.js";
+import workersOsSystem from "../workers/workersOsSystem.js";
+
+const workersDirectoryOperations = new Set(["up", "cd", "ls"]);
+const workersWithFilesOperations = new Set([
+  "cat",
+  "add",
+  "rn",
+  "cp",
+  "mv",
+  "rm",
+  "hash",
+  "compress",
+  "decompress",
+]);
+let dir = os.homedir();
+
+function getCurrentDir() {
+  console.log(`You are currently in ${dir}`);
+}
+
+async function handleWorkers(data) {
+  const args = data.trim().split(" ");
+  const command = args[0];
+
+  if (workersDirectoryOperations.has(command)) {
+    return await workerDirectory(args, dir);
+  } else if (workersWithFilesOperations.has(command)) {
+    await workersWithFiles(args);
+  } else if (command === "os") {
+    workersOsSystem(args);
+  } else if (command === ".exit") {
+    exit(username);
+  } else {
+    console.error("Invalid input");
+  }
+
+  getCurrentDir();
+}
+
+function inputCommand() {
+  console.log("Please print command");
+
+  stdin.on("data", async (data) => {
+    let result = await handleWorkers(data.toString());
+    if (result) dir = result;
+  });
+}
+
+export { getCurrentDir, inputCommand };
