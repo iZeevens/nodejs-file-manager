@@ -16,8 +16,8 @@ async function cdDir(currDir, pathToFile) {
     const pathCd = path.join(currDir, pathToFile);
     await fs.access(pathCd);
     return pathCd;
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 

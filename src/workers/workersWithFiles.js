@@ -2,57 +2,53 @@ import fs from "node:fs";
 import zlib from "node:zlib";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
+import { pipeline } from "node:stream";
 
-async function handleFileOperation(operation, requiredArgs, ...args) {
-  if (args.length < requiredArgs || args.some((arg) => arg == null)) {
-    console.error("Invalid input");
-    return;
-  }
-
+async function handleFileOperation(operation, ...args) {
   try {
     await operation(...args);
-  } catch {
-    console.error("Operation failed");
+  } catch (err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
+// Problem first result
 async function readFileOperation(pathToFile) {
   const read = (pathToFile) => {
     const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
     data.on("data", (chunk) => {
       console.log(chunk);
     });
-    data.on("error", () => {
-      console.error("Operation failed");
+    data.on("error", (err) => {
+      console.error(`Operation failed ${err}`);
     });
   };
 
-  await handleFileOperation(read, 1, pathToFile);
+  await handleFileOperation(read, pathToFile);
 }
 
 async function addFileOperation(pathToFile) {
-  await handleFileOperation(fs.promises.writeFile, 1, pathToFile, "");
+  await handleFileOperation(fs.promises.writeFile, pathToFile, "");
 }
 
 async function renameFileOperation(pathToFile, pathToNewFile) {
   await handleFileOperation(
     fs.promises.rename,
-    2,
     pathToFile,
     join(pathToFile, "..", pathToNewFile)
   );
 }
 
 async function copyFileOperation(pathToFile, pathToNewFile) {
-  await handleFileOperation(fs.promises.copyFile, 2, pathToFile, pathToNewFile);
+  await handleFileOperation(fs.promises.copyFile, pathToFile, pathToNewFile);
 }
 
 async function moveFileOperation(pathToFile, pathToNewFile) {
-  await handleFileOperation(fs.promises.rename, 2, pathToFile, pathToNewFile);
+  await handleFileOperation(fs.promises.rename, pathToFile, pathToNewFile);
 }
 
 async function deleteFileOperation(pathToFile) {
-  await handleFileOperation(fs.promises.unlink, 1, pathToFile);
+  await handleFileOperation(fs.promises.unlink, pathToFile);
 }
 
 async function hashFileOpertaion(pathToFile) {
@@ -65,33 +61,43 @@ async function hashFileOpertaion(pathToFile) {
     readStream.on("end", () => {
       console.log(`SHA256 hash for the file: ${hash.digest("hex")}`);
     });
-    readStream.on("error", () => {
-      console.error("Operation failed");
+    readStream.on("error", (err) => {
+      console.error(`Operation failed ${err}`);
     });
   };
-  await handleFileOperation(hash, 1, pathToFile);
+  await handleFileOperation(hash, pathToFile);
 }
 
 async function compressFileOperation(pathToFile, pathToNewFile) {
-  const compress = (pathToFile, pathToNewFile) => {
+  const compress = async (pathToFile, pathToNewFile) => {
+    await fs.promises.access(pathToFile);
     const readStream = fs.createReadStream(pathToFile);
     const writeStream = fs.createWriteStream(pathToNewFile);
-    const broat = zlib.createBrotliCompress();
-    readStream.pipe(broat).pipe(writeStream);
+    const brotli = zlib.createBrotliCompress();
+    pipeline(readStream, brotli, writeStream, (err) => {
+      if (err) {
+        console.error(`Operation failed ${err}`);
+      }
+    });
   };
 
-  await handleFileOperation(compress, 2, pathToFile, pathToNewFile);
+  await handleFileOperation(compress, pathToFile, pathToNewFile);
 }
 
 async function decompressFileOperation(pathToFile, pathToNewFile) {
-  const decompress = (pathToFile, pathToNewFile) => {
+  const decompress = async (pathToFile, pathToNewFile) => {
+    await fs.promises.access(pathToFile);
     const readStream = fs.createReadStream(pathToFile);
     const writeStream = fs.createWriteStream(pathToNewFile);
-    const broat = zlib.createBrotliDecompress();
-    readStream.pipe(broat).pipe(writeStream);
+    const brotli = zlib.createBrotliDecompress();
+    pipeline(readStream, brotli, writeStream, (err) => {
+      if (err) {
+        console.error(`Operation failed ${err}`);
+      }
+    });
   };
 
-  await handleFileOperation(decompress, 2, pathToFile, pathToNewFile);
+  await handleFileOperation(decompress, pathToFile, pathToNewFile);
 }
 
 async function workersWithFiles(opertaions) {
@@ -100,20 +106,24 @@ async function workersWithFiles(opertaions) {
   const pathToNewFile = opertaions[2] || null;
 
   const operationMap = {
-    cat: readFileOperation,
-    add: addFileOperation,
-    rn: renameFileOperation,
-    cp: copyFileOperation,
-    mv: moveFileOperation,
-    rm: deleteFileOperation,
-    hash: hashFileOpertaion,
-    compress: compressFileOperation,
-    decompress: decompressFileOperation,
+    cat: { operation: readFileOperation, numberArgs: 1 },
+    add: { operation: addFileOperation, numberArgs: 1 },
+    rn: { operation: renameFileOperation, numberArgs: 2 },
+    cp: { operation: copyFileOperation, numberArgs: 2 },
+    mv: { operation: moveFileOperation, numberArgs: 2 },
+    rm: { operation: deleteFileOperation, numberArgs: 1 },
+    hash: { operation: hashFileOpertaion, numberArgs: 1 },
+    compress: { operation: compressFileOperation, numberArgs: 2 },
+    decompress: { operation: decompressFileOperation, numberArgs: 2 },
   };
 
-  const operationFunction = operationMap[operationName];
+  const operationFunction = operationMap[operationName].operation;
+  const numberArgsOperationFunction = operationMap[operationName].numberArgs;
 
-  if (operationFunction) {
+  if (
+    operationFunction &&
+    opertaions.length - 1 === numberArgsOperationFunction
+  ) {
     await operationFunction(pathToFile, pathToNewFile);
   } else {
     console.error("Invalid input");

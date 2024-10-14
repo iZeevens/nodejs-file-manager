@@ -3,8 +3,8 @@ import os from "node:os";
 function getEOL() {
   try {
     console.log(JSON.stringify(os.EOL));
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
@@ -17,32 +17,32 @@ function getCpus() {
     });
 
     console.table(userCpus);
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
 function getHomeDir() {
   try {
     console.log(os.homedir());
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
 function getUsername() {
   try {
     console.log(os.userInfo().username);
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
 function getArchitecture() {
   try {
     console.log(os.arch());
-  } catch {
-    console.error("Operation failed");
+  } catch(err) {
+    console.error(`Operation failed ${err}`);
   }
 }
 
