@@ -22,6 +22,9 @@ async function readFileOperation(pathToFile) {
     data.on("data", (chunk) => {
       console.log(chunk);
     });
+    data.on("error", () => {
+      console.error("Operation failed");
+    });
   };
 
   await handleFileOperation(read, 1, pathToFile);
@@ -62,8 +65,8 @@ async function hashFileOpertaion(pathToFile) {
     readStream.on("end", () => {
       console.log(`SHA256 hash for the file: ${hash.digest("hex")}`);
     });
-    readStream.on("error", (err) => {
-      console.error(err.message);
+    readStream.on("error", () => {
+      console.error("Operation failed");
     });
   };
   await handleFileOperation(hash, 1, pathToFile);
