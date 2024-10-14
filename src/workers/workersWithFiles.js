@@ -5,15 +5,22 @@ import { join } from "node:path";
 import { pipeline } from "node:stream";
 import { handleFileOperation } from "./workersHelpers.js";
 
-// Problem first result
 async function readFileOperation(pathToFile) {
   const read = (pathToFile) => {
-    const data = fs.createReadStream(pathToFile, { encoding: "utf-8" });
-    data.on("data", (chunk) => {
-      console.log(chunk);
-    });
-    data.on("error", (err) => {
-      console.error(`Operation failed ${err}`);
+    return new Promise((resolve, reject) => {
+      const dataStream = fs.createReadStream(pathToFile, { encoding: "utf-8" });
+
+      dataStream.on("data", (chunk) => {
+        console.log(chunk);
+      });
+
+      dataStream.on("end", () => {
+        resolve();
+      });
+
+      dataStream.on("error", (err) => {
+        reject(err);
+      });
     });
   };
 
@@ -46,17 +53,19 @@ async function deleteFileOperation(pathToFile) {
 
 async function hashFileOpertaion(pathToFile) {
   const hash = (pathToFile) => {
-    const hash = createHash("sha256");
-    const readStream = fs.createReadStream(pathToFile);
-    readStream.on("data", (chunk) => {
-      hash.update(chunk);
-    });
-    readStream.on("end", () => {
-      console.log(`SHA256 hash for the file: ${hash.digest("hex")}`);
-    });
-    readStream.on("error", (err) => {
-      console.error(`Operation failed ${err}`);
-    });
+    return new Promise((resolve, reject) => {
+      const hash = createHash("sha256");
+      const readStream = fs.createReadStream(pathToFile);
+      readStream.on("data", (chunk) => {
+        hash.update(chunk);
+      });
+      readStream.on("end", () => {
+        resolve(console.log(`SHA256 hash for the file: ${hash.digest("hex")}`));
+      });
+      readStream.on("error", (err) => {
+        reject(err)
+      });
+    })  
   };
   await handleFileOperation(hash, pathToFile);
 }

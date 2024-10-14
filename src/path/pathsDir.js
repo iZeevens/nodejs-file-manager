@@ -31,7 +31,7 @@ async function handleWorkers(data) {
   if (workersDirectoryOperations.has(command)) {
     return await workerDirectory(args, dir);
   } else if (workersWithFilesOperations.has(command)) {
-    workersWithFiles(args);
+    await workersWithFiles(args);
   } else if (command === "os") {
     workersOsSystem(args);
   } else if (command === ".exit") {
@@ -39,6 +39,8 @@ async function handleWorkers(data) {
   } else {
     console.error("Invalid input");
   }
+
+  getCurrentDir();
 }
 
 function inputCommand() {
@@ -47,8 +49,6 @@ function inputCommand() {
   stdin.on("data", async (data) => {
     let result = await handleWorkers(data.toString());
     if (result) dir = result;
-
-    getCurrentDir();
   });
 }
 
